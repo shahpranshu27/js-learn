@@ -3,13 +3,13 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Quiz App</title>
+    <title>Advanced Quiz App</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <div class="quiz-container">
-        <h1>Quiz App</h1>
+        <h1>Quiz Master</h1>
 
         <!-- Progress -->
         <div class="progress-container">
@@ -17,21 +17,19 @@
         </div>
 
         <!-- Timer -->
-        <div id="timer">Time left: 10s</div>
+        <div id="timer">Time left: 15s</div>
 
-        <!-- Quiz Questions -->
+        <!-- Quiz -->
         <div id="quiz">
             <div id="question">Question text</div>
-            <ul>
-                <li><button class="answer-btn">Answer 1</button></li>
-                <li><button class="answer-btn">Answer 2</button></li>
-                <li><button class="answer-btn">Answer 3</button></li>
-                <li><button class="answer-btn">Answer 4</button></li>
-            </ul>
+            <ul id="answer-list"></ul>
         </div>
 
         <button id="next-btn">Next</button>
+
+        <!-- Result -->
         <div id="result" class="hidden"></div>
+        <div id="highscore" class="hidden"></div>
         <button id="restart-btn" class="hidden">Restart Quiz</button>
     </div>
 

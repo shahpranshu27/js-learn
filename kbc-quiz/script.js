@@ -3,37 +3,44 @@ const PRIZES = [
     "₹1,000", "₹2,000", "₹3,000", "₹5,000", "₹10,000",
     "₹20,000", "₹40,000", "₹80,000", "₹1,60,000", "₹3,20,000",
     "₹6,40,000", "₹12,50,000", "₹25,00,000", "₹50,00,000", "₹1,00,00,000"
-]; // index 0 is the bottom (₹1,000)
+];
 
 // ---------- Question Bank (easy -> medium -> hard) ----------
 const BANK = {
     easy: [
         { q: "What is the capital of India?", a: ["Mumbai", "Delhi", "Kolkata", "Chennai"], c: "Delhi" },
-        { q: "2 + 2 = ?", a: ["3", "4", "5", "6"], c: "4" },
-        { q: "Which gas do plants absorb?", a: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"], c: "Carbon Dioxide" },
-        { q: "Which is a web language?", a: ["Python", "C++", "JavaScript", "Java"], c: "JavaScript" },
-        { q: "Largest mammal?", a: ["Elephant", "Blue Whale", "Giraffe", "Hippo"], c: "Blue Whale" },
-        { q: "How many days in a week?", a: ["5", "6", "7", "8"], c: "7" },
+        { q: "Which planet is called the 'Red Planet'?", a: ["Venus", "Mars", "Jupiter", "Saturn"], c: "Mars" },
+        { q: "Who is known as the 'Father of the Nation' in India?", a: ["Nehru", "Mahatma Gandhi", "Sardar Patel", "Ambedkar"], c: "Mahatma Gandhi" },
+        { q: "Which Indian festival is called the 'Festival of Lights'?", a: ["Holi", "Diwali", "Eid", "Baisakhi"], c: "Diwali" },
+        { q: "The national animal of India is?", a: ["Lion", "Tiger", "Elephant", "Peacock"], c: "Tiger" },
+        { q: "How many players are there in a cricket team?", a: ["9", "10", "11", "12"], c: "11" },
+        { q: "Who was the first Prime Minister of India?", a: ["Mahatma Gandhi", "Subhash Bose", "Jawaharlal Nehru", "Rajendra Prasad"], c: "Jawaharlal Nehru" },
+        { q: "Which is the largest state in India by area?", a: ["Madhya Pradesh", "Uttar Pradesh", "Rajasthan", "Maharashtra"], c: "Rajasthan" }
     ],
     medium: [
-        { q: "Red Planet is?", a: ["Earth", "Venus", "Mars", "Jupiter"], c: "Mars" },
-        { q: "Largest ocean?", a: ["Atlantic", "Indian", "Arctic", "Pacific"], c: "Pacific" },
-        { q: "Author of Indian National Anthem?", a: ["Tagore", "Bankim Chandra", "Gandhi", "Tilak"], c: "Tagore" },
-        { q: "First PM of India?", a: ["Patel", "Nehru", "Shastri", "Indira Gandhi"], c: "Nehru" },
-        { q: "H2O is?", a: ["Hydrogen Peroxide", "Water", "Oxygen", "Salt"], c: "Water" },
-        { q: "CPU stands for?", a: ["Central Process Unit", "Central Processing Unit", "Computer Personal Unit", "Control Processing Unit"], c: "Central Processing Unit" },
+        { q: "Who wrote the book 'Discovery of India'?", a: ["Tagore", "Mahatma Gandhi", "Jawaharlal Nehru", "Sarojini Naidu"], c: "Jawaharlal Nehru" },
+        { q: "Which is the smallest state of India by area?", a: ["Sikkim", "Goa", "Tripura", "Nagaland"], c: "Goa" },
+        { q: "The dance form 'Bharatanatyam' belongs to which state?", a: ["Kerala", "Tamil Nadu", "Odisha", "Karnataka"], c: "Tamil Nadu" },
+        { q: "What is the currency of the UK?", a: ["Dollar", "Euro", "Pound Sterling", "Yen"], c: "Pound Sterling" },
+        { q: "Who was the first Indian woman in space?", a: ["Sunita Williams", "Kalpana Chawla", "Indira Gandhi", "Kiran Bedi"], c: "Kalpana Chawla" },
+        { q: "Where is the famous Sun Temple located?", a: ["Konark", "Madurai", "Khajuraho", "Hampi"], c: "Konark" },
+        { q: "Who invented the telephone?", a: ["Alexander Graham Bell", "Edison", "Tesla", "Marconi"], c: "Alexander Graham Bell" },
+        { q: "Which river is called the 'Sorrow of Bihar'?", a: ["Ganga", "Kosi", "Yamuna", "Ghaghara"], c: "Kosi" }
     ],
     hard: [
-        { q: "Theory of Relativity by?", a: ["Newton", "Einstein", "Tesla", "Edison"], c: "Einstein" },
-        { q: "Great Barrier Reef is in?", a: ["USA", "Australia", "India", "South Africa"], c: "Australia" },
-        { q: "Longest river (commonly cited)?", a: ["Amazon", "Nile", "Yangtze", "Mississippi"], c: "Nile" },
-        { q: "Who wrote 'Hamlet'?", a: ["Homer", "Shakespeare", "Dickens", "Tolstoy"], c: "Shakespeare" },
-        { q: "Currency of Japan?", a: ["Yen", "Won", "Ringgit", "Baht"], c: "Yen" },
-        { q: "Vitamin C chemical name?", a: ["Retinol", "Ascorbic Acid", "Calciferol", "Cobalamin"], c: "Ascorbic Acid" },
-        { q: "Smallest prime number?", a: ["0", "1", "2", "3"], c: "2" },
-        { q: "Which year did WW2 end?", a: ["1942", "1945", "1947", "1950"], c: "1945" },
+        { q: "Who is known as the 'Missile Man of India'?", a: ["Vikram Sarabhai", "Homi Bhabha", "APJ Abdul Kalam", "Satish Dhawan"], c: "APJ Abdul Kalam" },
+        { q: "Which country hosted the first modern Olympics (1896)?", a: ["France", "USA", "Greece", "UK"], c: "Greece" },
+        { q: "In which year was the Indian Constitution adopted?", a: ["1947", "1949", "1950", "1952"], c: "1949" },
+        { q: "Who composed 'Sare Jahan Se Achha'?", a: ["Bankim Chandra", "Tagore", "Muhammad Iqbal", "Bharati"], c: "Muhammad Iqbal" },
+        { q: "What is the chemical symbol of Gold?", a: ["Au", "Ag", "Gd", "Pt"], c: "Au" },
+        { q: "Which Mughal emperor built Jama Masjid?", a: ["Babur", "Akbar", "Shah Jahan", "Aurangzeb"], c: "Shah Jahan" },
+        { q: "Which is the largest desert in the world?", a: ["Thar", "Sahara", "Gobi", "Antarctic Desert"], c: "Antarctic Desert" },
+        { q: "Who was the first Indian to win a Nobel Prize?", a: ["CV Raman", "Amartya Sen", "Rabindranath Tagore", "Mother Teresa"], c: "Rabindranath Tagore" },
+        { q: "Which gas is most abundant in Earth’s atmosphere?", a: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Argon"], c: "Nitrogen" },
+        { q: "Which Indian city is called the 'City of Palaces'?", a: ["Hyderabad", "Mysuru", "Udaipur", "Jaipur"], c: "Mysuru" }
     ]
 };
+
 
 // ---------- DOM ----------
 const ladderEl = document.getElementById("ladder");
@@ -50,8 +57,8 @@ const audienceBtn = document.getElementById("audienceBtn");
 const phoneBtn = document.getElementById("phoneBtn");
 
 // ---------- State ----------
-let gameQuestions = [];       // prebuilt list of 15 questions (increasing difficulty)
-let idx = 0;                  // current question index (0 → bottom prize)
+let gameQuestions = [];
+let idx = 0;
 let moneyWon = 0;
 let timer = null;
 let timeLeft = 30;
@@ -71,7 +78,6 @@ function buildGameQuestions() {
     const med = sampleWithoutReplacement(BANK.medium, 5);
     const hard = sampleWithoutReplacement(BANK.hard, 5);
 
-    // If a bank is short, pad from itself shuffled (rare)
     function pad(list, bank, need) {
         while (list.length < need) list.push(shuffle(bank)[0]);
         return list;
@@ -99,13 +105,28 @@ function highlightStep() {
 
 function setTimer() {
     clearInterval(timer);
-    // 30s up to ₹10,000 (idx 0..4), then 60s from ₹20,000 (idx 5) onwards
-    timeLeft = idx < 5 ? 30 : 60;
-    timerEl.textContent = `⏳ ${timeLeft}s`;
+
+    // timeLeft based on current idx (question number)
+    if (idx <= 4) {
+        timeLeft = 30;
+    } else if (idx <= 9) {
+        timeLeft = 60;
+    } else {
+        // No timer from question index 10 onwards
+        timerEl.textContent = `No Time Limit`;
+        return;
+    }
+
+    // Start countdown
+    timerEl.textContent = `${timeLeft}s`;
     timer = setInterval(() => {
         timeLeft--;
-        timerEl.textContent = `⏳ ${timeLeft}s`;
-        if (timeLeft <= 0) return endGame("⏰ Time's up! Game Over.");
+        timerEl.textContent = `${timeLeft}s`;
+
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            endGame("Time's up! Game Over.");
+        }
     }, 1000);
 }
 
@@ -146,13 +167,13 @@ function selectAnswer(btn, correct) {
 
         if (idx >= PRIZES.length) {
             // Crorepati!
-            return setTimeout(() => endGame("🎉 Congratulations! You are a Crorepati!"), 900);
+            return setTimeout(() => endGame("Congratulations! You are a Crorepati!"), 900);
         }
 
         // Move to next question automatically
         setTimeout(() => renderQuestion(), 900);
     } else {
-        endGame("❌ Wrong Answer! Game Over.");
+        endGame("Wrong Answer! Game Over.");
     }
 }
 
@@ -216,7 +237,7 @@ audienceBtn.addEventListener("click", () => {
     scores[last] += remaining;
 
     alert(
-        "📊 Audience Poll:\n" +
+        "Audience Poll:\n" +
         options.map(o => `${o}: ${scores[o]}%`).join("\n")
     );
 });
@@ -231,7 +252,7 @@ phoneBtn.addEventListener("click", () => {
     const suggestCorrect = Math.random() < 0.8;
     const suggestion = suggestCorrect ? q.c : shuffle(q.a.filter(x => x !== q.c))[0];
 
-    alert(`📞 Friend: I think it's "${suggestion}"`);
+    alert(`Friend: I think it's "${suggestion}"`);
 });
 
 // ---------- Restart ----------

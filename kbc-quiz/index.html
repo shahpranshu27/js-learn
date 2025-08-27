@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>KBC Quiz Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div class="container">
+        <!-- LEFT: Game Area -->
+        <div class="game-area">
+            <h1>Kaun Banega Crorepati</h1>
+
+            <div class="hud">
+                <div id="timer">⏳ 30s</div>
+                <div id="money-earned">Money Won: ₹0</div>
+            </div>
+
+            <div id="question-container">
+                <h2 id="question">Loading…</h2>
+                <div id="options" class="options"></div>
+            </div>
+
+            <div class="lifelines">
+                <button id="fiftyBtn">50-50</button>
+                <button id="audienceBtn">Audience Poll</button>
+                <button id="phoneBtn">Phone a Friend</button>
+            </div>
+
+            <div id="game-over" class="hidden">
+                <h2 id="result-text"></h2>
+                <button id="restartBtn">Restart</button>
+            </div>
+        </div>
+
+        <!-- RIGHT: Money Pyramid (bottom-up) -->
+        <aside class="money-pyramid">
+            <ul id="ladder"></ul>
+        </aside>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

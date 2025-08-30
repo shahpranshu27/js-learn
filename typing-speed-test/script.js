@@ -1,13 +1,13 @@
 /* ============================
    Typing Test — Core Logic
-   (no external libs)
+   (updated: adds a 6-line viewport + smooth scroll)
    ============================ */
 
 /* small word bank — expand as desired */
 const WORDS = ("ability about absolute accept access across act active actual adapt add address admin advance afford after again against age agency agent agree ahead aim air album almost alone along already also alter always among amount analysis and answer any anyone anything apartment appear apply april area argue arm around arrive art article artist as ask assume at attack attention attorney audience author available avoid aware").split(" ");
 
 /* UI refs */
-const wordsEl = document.getElementById('words');
+const wordsEl = document.getElementById('words');            // container that holds words
 const typingArea = document.getElementById('typingArea');
 const wpmEl = document.getElementById('wpm');
 const accuracyEl = document.getElementById('accuracy');
@@ -39,6 +39,21 @@ let totalTypedChars = 0;
 let errors = 0;
 let correctWords = 0;
 
+/* viewport config */
+const VISIBLE_LINES = 6;   // number of lines visible at once
+let cachedLineHeight = null; // px
+let innerWrapperSelector = '.words-inner';
+
+/* ---------- helpers to work with inner wrapper ---------- */
+function getInner() {
+    const inner = wordsEl.querySelector(innerWrapperSelector);
+    return inner ? inner : wordsEl;
+}
+function getWordEl(idx) {
+    const inner = getInner();
+    return inner.children[idx];
+}
+
 /* generate word list based on seconds */
 function generateWords(seconds) {
     const desiredWords = Math.ceil(seconds * 2.5);
@@ -49,9 +64,15 @@ function generateWords(seconds) {
     return out;
 }
 
-/* render words */
+/* render words into an inner wrapper (so we can translate it) */
 function renderWords() {
+    // clear container and create inner wrapper
     wordsEl.innerHTML = '';
+    const inner = document.createElement('div');
+    inner.className = 'words-inner';
+    inner.style.transition = 'transform 160ms linear';
+    inner.style.willChange = 'transform';
+
     wordList.forEach((w, wi) => {
         const span = document.createElement('span');
         span.className = 'word' + (wi === currentWordIndex ? ' current-word' : '');
@@ -62,29 +83,95 @@ function renderWords() {
             ch.textContent = w[ci];
             span.appendChild(ch);
         }
+        // trailing space char
         const space = document.createElement('span');
         space.className = 'char';
         space.textContent = ' ';
         span.appendChild(space);
-        wordsEl.appendChild(span);
+
+        inner.appendChild(span);
     });
-    setCursor();
+
+    wordsEl.appendChild(inner);
+
+    // ensure viewport height is set to ~VISIBLE_LINES
+    computeAndSetViewport();
+    setCursor(); // show initial cursor
+    // position inner so first lines visible (reset)
+    translateInner(0);
+}
+
+/* compute line height and set visible height on wordsEl */
+function computeAndSetViewport() {
+    const inner = getInner();
+    // need at least two child words to compute line height
+    if (!inner || inner.children.length === 0) {
+        cachedLineHeight = parseFloat(window.getComputedStyle(wordsEl).fontSize || 18) * 1.6;
+    } else {
+        // find first element on a different line to compute line height
+        const firstTop = inner.children[0].offsetTop;
+        let secondTop = null;
+        for (let i = 1; i < inner.children.length; i++) {
+            if (inner.children[i].offsetTop > firstTop) {
+                secondTop = inner.children[i].offsetTop;
+                break;
+            }
+        }
+        if (secondTop === null) {
+            // fallback: use font size * line-height assumption
+            const fs = parseFloat(window.getComputedStyle(wordsEl).fontSize || 18);
+            cachedLineHeight = fs * 1.6;
+        } else {
+            cachedLineHeight = secondTop - firstTop;
+        }
+    }
+
+    // set fixed container height to show VISIBLE_LINES lines and hide overflow
+    wordsEl.style.height = (cachedLineHeight * VISIBLE_LINES) + 'px';
+    wordsEl.style.overflow = 'hidden';
+    wordsEl.style.position = 'relative';
+}
+
+/* translate inner wrapper vertically to keep current word visible */
+function translateInner(desiredPx) {
+    const inner = getInner();
+    const maxTranslate = Math.max(0, inner.scrollHeight - wordsEl.clientHeight);
+    const clamped = Math.min(Math.max(0, desiredPx), maxTranslate);
+    inner.style.transform = `translateY(-${clamped}px)`;
+}
+
+/* compute and scroll so current word is visible with context */
+function scrollToCurrentWord() {
+    const inner = getInner();
+    const curWordEl = getWordEl(currentWordIndex);
+    if (!curWordEl) return;
+    // compute line index
+    const curTop = curWordEl.offsetTop; // offset within inner
+    const lineIndex = Math.floor(curTop / (cachedLineHeight || 1));
+    // place current line roughly at 3rd visible line for context
+    const targetTopLine = Math.max(0, lineIndex - 2);
+    const translateY = targetTopLine * (cachedLineHeight || 1);
+    translateInner(translateY);
 }
 
 /* show cursor (current char) */
 function setCursor() {
-    const allChars = document.querySelectorAll('.char');
+    // clear previous marker
+    const allChars = getInner().querySelectorAll('.char');
     allChars.forEach(c => c.classList.remove('current'));
-    const currentWordEl = wordsEl.children[currentWordIndex];
+    const currentWordEl = getWordEl(currentWordIndex);
     if (!currentWordEl) return;
     const charEls = currentWordEl.querySelectorAll('.char');
     const target = charEls[Math.min(charIndexInWord, charEls.length - 1)];
     if (target) target.classList.add('current');
+
+    // scroll inner so this word is visible (monkeytype-like)
+    scrollToCurrentWord();
 }
 
 /* mark correct/incorrect char */
 function markChar(wordIndex, charPos, correct) {
-    const wordEl = wordsEl.children[wordIndex];
+    const wordEl = getWordEl(wordIndex);
     if (!wordEl) return;
     const charEls = wordEl.querySelectorAll('.char');
     const el = charEls[charPos];
@@ -96,8 +183,9 @@ function markChar(wordIndex, charPos, correct) {
 /* recalc correct counts after backspace */
 function recalcCorrectCounts() {
     let c = 0, t = 0, err = 0;
+    const inner = getInner();
     for (let wi = 0; wi < wordList.length; wi++) {
-        const wordEl = wordsEl.children[wi];
+        const wordEl = inner.children[wi];
         if (!wordEl) continue;
         const charEls = wordEl.querySelectorAll('.char');
         for (let ci = 0; ci < charEls.length - 1; ci++) {
@@ -149,16 +237,28 @@ function handleKey(e) {
         started = true;
         startTimer();
     }
-    if (e.key === ' ') { e.preventDefault(); }
+    if (e.key === ' ') { e.preventDefault(); } // prevent page scroll
 
     const currentWord = wordList[currentWordIndex];
+    if (!currentWord) return;
+
     if (e.key === 'Backspace') {
         if (charIndexInWord > 0) {
             charIndexInWord--;
             // remove marking
-            const charEls = wordsEl.children[currentWordIndex].querySelectorAll('.char');
+            const charEls = getWordEl(currentWordIndex).querySelectorAll('.char');
             if (charEls[charIndexInWord]) charEls[charIndexInWord].classList.remove('correct', 'incorrect');
             totalTypedChars = Math.max(0, totalTypedChars - 1);
+            recalcCorrectCounts();
+        } else if (charIndexInWord === 0 && currentWordIndex > 0) {
+            // if at start of word, move back to previous word's last character
+            currentWordIndex--;
+            // place cursor at end of previous word (before the trailing space)
+            const prevWordLen = Math.max(0, wordList[currentWordIndex].length);
+            charIndexInWord = prevWordLen;
+            // remove trailing markings for that char if exist
+            const prevCharEls = getWordEl(currentWordIndex).querySelectorAll('.char');
+            if (prevCharEls[charIndexInWord]) prevCharEls[charIndexInWord].classList.remove('correct', 'incorrect');
             recalcCorrectCounts();
         }
         setCursor();
@@ -182,7 +282,7 @@ function handleKey(e) {
 
     // space -> move to next word
     if (e.key === ' ') {
-        const currentWordEl = wordsEl.children[currentWordIndex];
+        const currentWordEl = getWordEl(currentWordIndex);
         const charEls = currentWordEl.querySelectorAll('.char');
         let allCorrect = true;
         const lettersCount = Math.max(0, currentWord.length);

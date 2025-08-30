@@ -1,31 +1,85 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Typing Speed Test</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Typing Test — Monkeytype inspired</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-    <div class="container">
-        <h1>Typing Speed Test</h1>
-        <p class="instructions">Type the text below as fast and accurately as you can!</p>
 
-        <div id="quote" class="quote"></div>
+    <div class="card" role="main" aria-label="Typing test">
+        <div class="top-row">
+            <div>
+                <h1>Typing Test</h1>
+                <div class="subtitle">Minimal • Focused practice</div>
+            </div>
 
-        <textarea id="input" placeholder="Start typing here..." disabled></textarea>
+            <div class="controls">
+                <div class="btn-group" role="group" aria-label="time controls">
+                    <button class="btn time-btn" data-time="15">15s</button>
+                    <button class="btn time-btn active" data-time="30">30s</button>
+                    <button class="btn time-btn" data-time="60">60s</button>
+                </div>
 
-        <div class="stats">
-            <p>Time: <span id="timer">60</span>s</p>
-            <p>WPM: <span id="wpm">0</span></p>
-            <p>Accuracy: <span id="accuracy">100</span>%</p>
+                <button id="restart" class="btn" title="Restart test">Restart</button>
+            </div>
         </div>
 
-        <div class="buttons">
-            <button id="startBtn">▶️ Start</button>
-            <button id="resetBtn">🔄 Reset</button>
+        <div class="stats" aria-hidden="false" style="margin-bottom:12px">
+            <div class="stat-item">
+                <div class="stat-value" id="wpm">0</div>
+                <div class="subtitle">WPM</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="accuracy">100%</div>
+                <div class="subtitle">Accuracy</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="time">30s</div>
+                <div class="subtitle">Time</div>
+            </div>
+        </div>
+
+        <div class="typing-area" tabindex="0" id="typingArea" role="application">
+            <div class="words" id="words" aria-live="polite"></div>
+            <div class="input-hint">Start typing to begin. Use <kbd>Space</kbd> to move to the next word,
+                <kbd>Backspace</kbd> to correct.</div>
+        </div>
+
+        <div class="footer">
+            <div class="result-panel">
+                <div>
+                    <div class="result-label">CPM</div>
+                    <div class="result-value" id="cpm">0</div>
+                </div>
+                <div>
+                    <div class="result-label">Correct</div>
+                    <div class="result-value" id="correctCount">0</div>
+                </div>
+                <div>
+                    <div class="result-label">Errors</div>
+                    <div class="result-value" id="errorsCount">0</div>
+                </div>
+            </div>
+
+            <div class="muted">Built for practice • Inspired by Monkeytype</div>
+        </div>
+    </div>
+
+    <!-- result overlay -->
+    <div id="overlay" class="overlay" aria-hidden="true" style="display:none">
+        <div class="modal" role="dialog" aria-modal="true">
+            <h2>Result</h2>
+            <div class="big" id="finalWPM">0 WPM</div>
+            <p class="small">Accuracy: <strong id="finalAccuracy">100%</strong></p>
+            <p class="small">CPM: <strong id="finalCPM">0</strong> • Errors: <strong id="finalErrors">0</strong></p>
+            <div style="margin-top:14px">
+                <button id="closeBtn" class="btn">Close</button>
+                <button id="retryBtn" class="btn" style="margin-left:8px">Try Again</button>
+            </div>
         </div>
     </div>
 

@@ -1,96 +1,265 @@
-const quotes = [
-    "The quick brown fox jumps over the lazy dog.",
-    "JavaScript makes web pages interactive and dynamic.",
-    "Practice makes perfect when learning to code.",
-    "Typing fast is not as important as typing accurately.",
-    "A journey of a thousand miles begins with a single step."
-];
+/* ============================
+   Typing Test — Core Logic
+   (no external libs)
+   ============================ */
 
-const quoteEl = document.getElementById("quote");
-const inputEl = document.getElementById("input");
-const timerEl = document.getElementById("timer");
-const wpmEl = document.getElementById("wpm");
-const accuracyEl = document.getElementById("accuracy");
-const startBtn = document.getElementById("startBtn");
-const resetBtn = document.getElementById("resetBtn");
+/* small word bank — expand as desired */
+const WORDS = ("ability about absolute accept access across act active actual adapt add address admin advance afford after again against age agency agent agree ahead aim air album almost alone along already also alter always among amount analysis and answer any anyone anything apartment appear apply april area argue arm around arrive art article artist as ask assume at attack attention attorney audience author available avoid aware").split(" ");
 
-let timeLeft = 60;
-let timer = null;
-let currentQuote = "";
-let typedChars = 0;
-let correctChars = 0;
+/* UI refs */
+const wordsEl = document.getElementById('words');
+const typingArea = document.getElementById('typingArea');
+const wpmEl = document.getElementById('wpm');
+const accuracyEl = document.getElementById('accuracy');
+const timeEl = document.getElementById('time');
+const cpmEl = document.getElementById('cpm');
+const correctCountEl = document.getElementById('correctCount');
+const errorsCountEl = document.getElementById('errorsCount');
+
+const finalOverlay = document.getElementById('overlay');
+const finalWPM = document.getElementById('finalWPM');
+const finalAccuracy = document.getElementById('finalAccuracy');
+const finalCPM = document.getElementById('finalCPM');
+const finalErrors = document.getElementById('finalErrors');
+const closeBtn = document.getElementById('closeBtn');
+const retryBtn = document.getElementById('retryBtn');
+const restartBtn = document.getElementById('restart');
+
+let timeLimit = 30;        // seconds (default)
+let timeLeft = 30;
+let timerId = null;
 let started = false;
 
-function getRandomQuote() {
-    return quotes[Math.floor(Math.random() * quotes.length)];
+/* test state */
+let wordList = [];         // array of words for the test
+let currentWordIndex = 0;
+let charIndexInWord = 0;   // pointer in current word
+let correctChars = 0;
+let totalTypedChars = 0;
+let errors = 0;
+let correctWords = 0;
+
+/* generate word list based on seconds */
+function generateWords(seconds) {
+    const desiredWords = Math.ceil(seconds * 2.5);
+    const out = [];
+    for (let i = 0; i < desiredWords; i++) {
+        out.push(WORDS[Math.floor(Math.random() * WORDS.length)]);
+    }
+    return out;
 }
 
-function startGame() {
-    if (started) return; // avoid multiple starts
-    started = true;
-    inputEl.disabled = false;
-    inputEl.value = "";
-    inputEl.focus();
+/* render words */
+function renderWords() {
+    wordsEl.innerHTML = '';
+    wordList.forEach((w, wi) => {
+        const span = document.createElement('span');
+        span.className = 'word' + (wi === currentWordIndex ? ' current-word' : '');
+        for (let ci = 0; ci < w.length; ci++) {
+            const ch = document.createElement('span');
+            ch.className = 'char';
+            ch.dataset.char = w[ci];
+            ch.textContent = w[ci];
+            span.appendChild(ch);
+        }
+        const space = document.createElement('span');
+        space.className = 'char';
+        space.textContent = ' ';
+        span.appendChild(space);
+        wordsEl.appendChild(span);
+    });
+    setCursor();
+}
 
-    currentQuote = getRandomQuote();
-    quoteEl.textContent = currentQuote;
+/* show cursor (current char) */
+function setCursor() {
+    const allChars = document.querySelectorAll('.char');
+    allChars.forEach(c => c.classList.remove('current'));
+    const currentWordEl = wordsEl.children[currentWordIndex];
+    if (!currentWordEl) return;
+    const charEls = currentWordEl.querySelectorAll('.char');
+    const target = charEls[Math.min(charIndexInWord, charEls.length - 1)];
+    if (target) target.classList.add('current');
+}
 
-    timeLeft = 60;
-    timerEl.textContent = timeLeft;
-    typedChars = 0;
-    correctChars = 0;
+/* mark correct/incorrect char */
+function markChar(wordIndex, charPos, correct) {
+    const wordEl = wordsEl.children[wordIndex];
+    if (!wordEl) return;
+    const charEls = wordEl.querySelectorAll('.char');
+    const el = charEls[charPos];
+    if (!el) return;
+    el.classList.remove('correct', 'incorrect');
+    el.classList.add(correct ? 'correct' : 'incorrect');
+}
 
-    timer = setInterval(() => {
+/* recalc correct counts after backspace */
+function recalcCorrectCounts() {
+    let c = 0, t = 0, err = 0;
+    for (let wi = 0; wi < wordList.length; wi++) {
+        const wordEl = wordsEl.children[wi];
+        if (!wordEl) continue;
+        const charEls = wordEl.querySelectorAll('.char');
+        for (let ci = 0; ci < charEls.length - 1; ci++) {
+            const el = charEls[ci];
+            if (el.classList.contains('correct')) c++;
+            if (el.classList.contains('incorrect')) err++;
+            if (el.classList.contains('correct') || el.classList.contains('incorrect')) t++;
+        }
+    }
+    correctChars = c;
+    totalTypedChars = t;
+    errors = err;
+}
+
+/* timer */
+function startTimer() {
+    if (timerId) clearInterval(timerId);
+    timeLeft = timeLimit;
+    timeEl.textContent = `${timeLeft}s`;
+    timerId = setInterval(() => {
         timeLeft--;
-        timerEl.textContent = timeLeft;
+        timeEl.textContent = `${timeLeft}s`;
+        updateLiveStats();
         if (timeLeft <= 0) {
-            endGame();
+            clearInterval(timerId);
+            finishTest();
         }
     }, 1000);
 }
 
-function endGame() {
-    clearInterval(timer);
-    inputEl.disabled = true;
-    started = false;
-}
-
-function resetGame() {
-    clearInterval(timer);
-    started = false;
-    timeLeft = 60;
-    timerEl.textContent = 60;
-    wpmEl.textContent = 0;
-    accuracyEl.textContent = 100;
-    inputEl.value = "";
-    inputEl.disabled = true;
-    quoteEl.textContent = "Click Start to begin!";
-}
-
-function calculateStats() {
-    typedChars = inputEl.value.length;
-
-    let correct = 0;
-    for (let i = 0; i < inputEl.value.length; i++) {
-        if (inputEl.value[i] === currentQuote[i]) {
-            correct++;
-        }
-    }
-    correctChars = correct;
-
-    // WPM = (characters/5) / (time spent in minutes)
-    let timeSpent = 60 - timeLeft;
-    let wpm = timeSpent > 0 ? Math.round((typedChars / 5) / (timeSpent / 60)) : 0;
-
-    let accuracy = typedChars > 0 ? Math.round((correctChars / typedChars) * 100) : 100;
-
+/* update live stats */
+function updateLiveStats() {
+    const elapsed = Math.max(1, timeLimit - timeLeft);
+    const cpm = Math.round((totalTypedChars / elapsed) * 60);
+    const wpm = Math.round((totalTypedChars / 5 / elapsed) * 60);
+    const accuracy = totalTypedChars > 0 ? Math.round((correctChars / totalTypedChars) * 100) : 100;
     wpmEl.textContent = wpm;
-    accuracyEl.textContent = accuracy;
+    cpmEl.textContent = cpm;
+    accuracyEl.textContent = accuracy + '%';
+    correctCountEl.textContent = correctChars;
+    errorsCountEl.textContent = errors;
 }
 
-inputEl.addEventListener("input", calculateStats);
-startBtn.addEventListener("click", startGame);
-resetBtn.addEventListener("click", resetGame);
+/* keyboard handler (global) */
+function handleKey(e) {
+    if (finalOverlay.style.display === 'flex') return;
+    // start on first meaningful key
+    if (!started && (e.key.length === 1 || e.key === 'Backspace' || e.key === ' ')) {
+        started = true;
+        startTimer();
+    }
+    if (e.key === ' ') { e.preventDefault(); }
 
-// Initial state
-resetGame();
+    const currentWord = wordList[currentWordIndex];
+    if (e.key === 'Backspace') {
+        if (charIndexInWord > 0) {
+            charIndexInWord--;
+            // remove marking
+            const charEls = wordsEl.children[currentWordIndex].querySelectorAll('.char');
+            if (charEls[charIndexInWord]) charEls[charIndexInWord].classList.remove('correct', 'incorrect');
+            totalTypedChars = Math.max(0, totalTypedChars - 1);
+            recalcCorrectCounts();
+        }
+        setCursor();
+        updateLiveStats();
+        return;
+    }
+
+    // printable char
+    if (e.key.length === 1 && e.key !== ' ') {
+        const expectedChar = currentWord[charIndexInWord] || '';
+        const typed = e.key;
+        const correct = typed === expectedChar;
+        markChar(currentWordIndex, charIndexInWord, correct);
+        totalTypedChars++;
+        if (correct) correctChars++; else errors++;
+        charIndexInWord++;
+        setCursor();
+        updateLiveStats();
+        return;
+    }
+
+    // space -> move to next word
+    if (e.key === ' ') {
+        const currentWordEl = wordsEl.children[currentWordIndex];
+        const charEls = currentWordEl.querySelectorAll('.char');
+        let allCorrect = true;
+        const lettersCount = Math.max(0, currentWord.length);
+        for (let i = 0; i < lettersCount; i++) {
+            const el = charEls[i];
+            if (!el.classList.contains('correct')) { allCorrect = false; break; }
+        }
+        if (allCorrect) correctWords++;
+        currentWordIndex++;
+        charIndexInWord = 0;
+        setCursor();
+        updateLiveStats();
+        return;
+    }
+}
+
+/* finish test and show modal */
+function finishTest() {
+    if (timerId) clearInterval(timerId);
+    const elapsed = timeLimit;
+    const finalCPMVal = Math.round((totalTypedChars / elapsed) * 60);
+    const finalWPMVal = Math.round((totalTypedChars / 5 / elapsed) * 60);
+    const finalAccuracyVal = totalTypedChars > 0 ? Math.round((correctChars / totalTypedChars) * 100) : 100;
+
+    finalWPM.textContent = `${finalWPMVal} WPM`;
+    finalAccuracy.textContent = finalAccuracyVal + '%';
+    finalCPM.textContent = finalCPMVal;
+    finalErrors.textContent = errors;
+
+    finalOverlay.style.display = 'flex';
+}
+
+/* reset */
+function resetTest() {
+    if (timerId) clearInterval(timerId);
+    started = false;
+    currentWordIndex = 0;
+    charIndexInWord = 0;
+    correctChars = 0;
+    totalTypedChars = 0;
+    errors = 0;
+    correctWords = 0;
+    wordList = generateWords(timeLimit);
+    renderWords();
+    wpmEl.textContent = '0';
+    cpmEl.textContent = '0';
+    accuracyEl.textContent = '100%';
+    correctCountEl.textContent = '0';
+    errorsCountEl.textContent = '0';
+    timeEl.textContent = timeLimit + 's';
+    finalOverlay.style.display = 'none';
+}
+
+/* init */
+function init() {
+    document.querySelectorAll('.time-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            timeLimit = parseInt(btn.dataset.time, 10);
+            timeLeft = timeLimit;
+            timeEl.textContent = timeLimit + 's';
+            resetTest();
+        });
+    });
+
+    typingArea.addEventListener('click', () => typingArea.focus());
+    window.addEventListener('keydown', handleKey);
+
+    restartBtn.addEventListener('click', () => resetTest());
+    closeBtn.addEventListener('click', () => { finalOverlay.style.display = 'none'; });
+    retryBtn.addEventListener('click', () => { finalOverlay.style.display = 'none'; resetTest(); });
+
+    wordList = generateWords(timeLimit);
+    renderWords();
+    timeEl.textContent = timeLimit + 's';
+}
+
+/* run */
+init();

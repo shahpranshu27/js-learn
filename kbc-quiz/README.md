@@ -31,7 +31,7 @@ Test your knowledge, climb the money pyramid, use lifelines wisely, and see if y
 
 ---
 
-## 🖼️ Screenshots
+## Screenshots
 
 1. UI
 

@@ -7,7 +7,7 @@ This app helps users practice typing, improve speed, and track accuracy in real-
 
 ## Demo
 
-[Live Demo]()
+[Live Demo](https://shahpranshu27.github.io/js-learn/typing-speed-test/)
 
 ---
 
@@ -28,7 +28,7 @@ This app helps users practice typing, improve speed, and track accuracy in real-
 
 ---
 
-## 🖼️ Screenshots
+## Screenshots
 
 1. UI
 

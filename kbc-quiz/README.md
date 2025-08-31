@@ -7,7 +7,7 @@ Test your knowledge, climb the money pyramid, use lifelines wisely, and see if y
 
 ## Live Demo
 
-![Live Demo](https://shahpranshu27.github.io/js-learn/kbc-quiz/)
+[Live Demo](https://shahpranshu27.github.io/js-learn/kbc-quiz/)
 
 ## Features
 

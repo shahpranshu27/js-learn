@@ -1,13 +1,28 @@
-/* ============================
-   Typing Test — Core Logic
-   (updated: adds a 6-line viewport + smooth scroll)
-   ============================ */
-
 /* small word bank — expand as desired */
-const WORDS = ("ability about absolute accept access across act active actual adapt add address admin advance afford after again against age agency agent agree ahead aim air album almost alone along already also alter always among amount analysis and answer any anyone anything apartment appear apply april area argue arm around arrive art article artist as ask assume at attack attention attorney audience author available avoid aware").split(" ");
+const WORDS = (
+    "the of and to in is you that it he was for on are as with his they I at be this " +
+    "from or one had by word but not what all were we when your can said there use an each " +
+    "which she do how their if will up other about out many then them these so some her would " +
+    "make like him into time has look two more write go see number no way could people my than " +
+    "first water been call who oil its now find long down day did get come made may part " +
+    "after back think over only little work know place year live me give most very our just " +
+    "name good sentence man great where help through much before line right too means old any " +
+    "same tell boy follow came want show also around form three small set put end does another " +
+    "well large must big even such because turn here why ask went men read need land different " +
+    "home us move try kind hand picture again change off play spell air away animal house point " +
+    "page letter mother answer found study still learn should America world high every near add " +
+    "food between own below country plant last school father keep tree never start city earth eye " +
+    "light thought head under story saw left don't few while along might close something seem next " +
+    "hard open example begin life always those both paper together got group often run important " +
+    "until children side feet car mile night walk white sea began grow took river four carry state " +
+    "once book hear stop without second later miss idea enough eat face watch far Indian real almost " +
+    "let above girl sometimes mountains cut young talk soon list song being leave family it's don't " +
+    "I'm you're we've they've can't won't didn't couldn't shouldn't doesn't hasn't let's that's"
+).split(" ");
+
 
 /* UI refs */
-const wordsEl = document.getElementById('words');            // container that holds words
+const wordsEl = document.getElementById('words');
 const typingArea = document.getElementById('typingArea');
 const wpmEl = document.getElementById('wpm');
 const accuracyEl = document.getElementById('accuracy');
@@ -25,7 +40,7 @@ const closeBtn = document.getElementById('closeBtn');
 const retryBtn = document.getElementById('retryBtn');
 const restartBtn = document.getElementById('restart');
 
-let timeLimit = 30;        // seconds (default)
+let timeLimit = 30;
 let timeLeft = 30;
 let timerId = null;
 let started = false;

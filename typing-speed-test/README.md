@@ -5,6 +5,12 @@ This app helps users practice typing, improve speed, and track accuracy in real-
 
 ---
 
+## Demo
+
+[Live Demo]()
+
+---
+
 ## Features
 
 - **Multiple Time Modes** – Choose from `15s`, `30s`, or `60s`.
@@ -19,6 +25,22 @@ This app helps users practice typing, improve speed, and track accuracy in real-
 - **Modern UI** – Built with **TailwindCSS** for a responsive, clean, and attractive interface.
 - **Keyboard Friendly** – No mouse interaction needed once test starts.
 - **Lightweight & Fast** – No external dependencies beyond Tailwind.
+
+---
+
+## 🖼️ Screenshots
+
+1. UI
+
+![UI](./img/UI.png)
+
+2. Live Tracking
+
+![Live Tracking](./img/live-tracking.png)
+
+3. Results
+
+![Result](./img/result.png)
 
 ---
 
@@ -52,9 +74,3 @@ This app helps users practice typing, improve speed, and track accuracy in real-
 * High score tracking using **LocalStorage**
 * Add difficulty levels (easy, medium, hard word sets)
 * Multiplayer typing race mode
-
----
-
-## Demo
-
-[Live Demo]()

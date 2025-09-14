@@ -30,5 +30,35 @@
         </ul>
     </div>
 </body>
+<script>
+        // document.getElementById('owl').addEventListener('click', function(e){
+        //         console.log('owl clicked!');
+        //         e.stopPropagation()
+        // }, false)
 
+        // document.getElementById('images').addEventListener('click', function(e){
+        //         console.log('images clicked!')
+        // })
+
+        // document.getElementById('google').addEventListener('click', function(e){
+        //         console.log('google clicked!')
+        //         e.preventDefault(); // stops the default action, that was gonna happen
+        //         e.stopPropagation(); // stops bubbling -> jumping to another event listner, like click on images event in this case
+        // })
+
+        document.querySelector('#images').addEventListener
+        ('click', function(e){
+                // console.log(e.target.parentNode.style.display='none')
+                // const removeIt = e.target.parentNode // gives the <li>
+                // removeIt.remove()
+                // removeIt.parentNode.removeChild(removeIt) // take teh parent of <li> i.e. <ul>, and then remove the child of it i.e. removeIt
+                
+                console.log(e.target.tagName)
+                if (e.target.tagName === 'IMG') {
+                        console.log(e.target.id)
+                        const removeIt = e.target.parentNode
+                        removeIt.remove()
+                }
+        }, false)
+</script>
 </html>
